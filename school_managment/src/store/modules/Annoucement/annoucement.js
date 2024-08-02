@@ -14,13 +14,13 @@ const state = {
     success: null,
   },
   userAuthAnnonceState: {
-    announcementData: {},
+    annonces: [], // Store an array of announcements
     loading: false,
     error: null,
     success: null,
   },
   allUserAnnonceState: {
-    announcementsData: [], // Change here to store an array of announcements
+    annonces: [], // Store an array of announcements
     loading: false,
     error: null,
     success: null,
@@ -30,6 +30,11 @@ const state = {
     loading: false,
     error: null,
     success: null,
+  },
+  selectedAnnonceDetail: {
+    annonce: {}, // New state for selected annonce
+    loading: false,
+    error: null,
   },
 };
 
@@ -50,13 +55,13 @@ const mutations = {
   ANNOUNCE_CREATE_SUCCESS(state, payload) {
     state.annonceCreatedState.loading = false;
     state.annonceCreatedState.success = payload.message;
-    state.annonceCreatedState.announcementData = payload.data;
+    state.annonceCreatedState.announcementData = payload.annonce;
   },
   ANNOUNCE_CREATE_FAILURE(state, error) {
     state.annonceCreatedState.loading = false;
     state.annonceCreatedState.error = error;
   },
-  // Announce creation mutations
+  // All users announce
   ALL_USERS_ANNONCE_REQUEST(state) {
     state.allUserAnnonceState.loading = true;
     state.allUserAnnonceState.error = null;
@@ -65,7 +70,7 @@ const mutations = {
   ALL_USERS_ANNONCE_SUCCESS(state, payload) {
     state.allUserAnnonceState.loading = false;
     state.allUserAnnonceState.success = payload.message;
-    state.allUserAnnonceState.announcementData = payload.data;
+    state.allUserAnnonceState.annonces = payload;
   },
   ALL_USERS_ANNONCE_FAILURE(state, error) {
     state.allUserAnnonceState.loading = false;
@@ -79,25 +84,29 @@ const mutations = {
   },
   GET_AUTH_ANNOUNCE_SUCCESS(state, payload) {
     state.userAuthAnnonceState.loading = false;
-    state.userAuthAnnonceState.announcementData = payload.data;
+    state.userAuthAnnonceState.annonces = payload; // Directly assign the array
   },
   GET_AUTH_ANNOUNCE_FAILURE(state, error) {
     state.userAuthAnnonceState.loading = false;
     state.userAuthAnnonceState.error = error;
   },
-  // Get another user's announcement mutations
-  GET_USER_ANNOUNCE_REQUEST(state) {
-    state.userAnnonceState.loading = true;
-    state.userAnnonceState.error = null;
-    state.userAnnonceState.success = null;
+  // Delete user auth annonce
+  DELETE_ANNOUNCE_REQUEST(state) {
+    state.userAuthAnnonceState.loading = true;
+    state.userAuthAnnonceState.error = null;
+    state.userAuthAnnonceState.success = null;
   },
-  GET_USER_ANNOUNCE_SUCCESS(state, payload) {
-    state.userAnnonceState.loading = false;
-    state.userAnnonceState.announcementData = payload.data;
+  DELETE_ANNOUNCE_SUCCESS(state, annonceId) {
+    state.userAuthAnnonceState.loading = false;
+    state.userAuthAnnonceState.success = "Annonce supprimée avec succès";
+    state.userAuthAnnonceState.annonces =
+      state.userAuthAnnonceState.annonces.filter(
+        (annonce) => annonce.id !== annonceId
+      );
   },
-  GET_USER_ANNOUNCE_FAILURE(state, error) {
-    state.userAnnonceState.loading = false;
-    state.userAnnonceState.error = error;
+  DELETE_ANNOUNCE_FAILURE(state, error) {
+    state.userAuthAnnonceState.loading = false;
+    state.userAuthAnnonceState.error = error;
   },
   // Update announcement mutations
   UPDATE_ANNOUNCE_REQUEST(state) {
@@ -113,6 +122,19 @@ const mutations = {
   UPDATE_ANNOUNCE_FAILURE(state, error) {
     state.annonceCreatedState.loading = false;
     state.annonceCreatedState.error = error;
+  },
+  // Selected annonce mutations
+  SELECT_ANNOUNCE_REQUEST(state) {
+    state.selectedAnnonceDetail.loading = true;
+    state.selectedAnnonceDetail.error = null;
+  },
+  SELECT_ANNOUNCE_SUCCESS(state, payload) {
+    state.selectedAnnonceDetail.loading = false;
+    state.selectedAnnonceDetail.annonce = payload.data;
+  },
+  SELECT_ANNOUNCE_FAILURE(state, error) {
+    state.selectedAnnonceDetail.loading = false;
+    state.selectedAnnonceDetail.error = error;
   },
 };
 
@@ -150,38 +172,38 @@ const actions = {
           "Content-Type": "application/json",
           Authorization: `Bearer ${authToken}`,
         },
-        withCredentials: true,
       };
 
       // Extracting data from state
       const {
-        slug,
+        title,
         description,
-        courseDescription,
-        mainSubject,
-        subSpecialties,
-        courseMode,
-        city,
-        hourlyRate,
-        responseTime,
+        requirements,
+        location,
+        deadline,
+        category,
+        contract_type,
+        company_name,
       } = state.annonceCreatedState.announcementData;
 
       const response = await axios.post(
-        "http://localhost:7000/api/v1/annonce/create-annonce",
+        "http://77.37.86.249:8124/api/jobs/create/",
         {
-          slug,
+          title,
           description,
-          courseDescription,
-          mainSubject,
-          subSpecialties,
-          courseMode,
-          city,
-          hourlyRate,
-          responseTime,
+          requirements,
+          location,
+          deadline,
+          category,
+          contract_type,
+          company_name,
         },
         config
       );
-      commit("ANNOUNCE_CREATE_SUCCESS", response.data);
+      commit("ANNOUNCE_CREATE_SUCCESS", {
+        annonce: response.data,
+        message: "votre annonce a été créer avec succès",
+      });
     } catch (error) {
       commit(
         "ANNOUNCE_CREATE_FAILURE",
@@ -211,11 +233,10 @@ const actions = {
           "Content-Type": "application/json",
           Authorization: `Bearer ${authToken}`,
         },
-        withCredentials: true,
       };
 
       const response = await axios.get(
-        "http://localhost:7000/api/v1/annonce/user-auth-annonce",
+        "http://77.37.86.249:8124/api/jobs/recruiter/",
         config
       );
       commit("GET_AUTH_ANNOUNCE_SUCCESS", response.data);
@@ -228,20 +249,38 @@ const actions = {
     }
   },
 
-  // Get a specific user's announcement
-  async getUserAnnonce({ commit }, userId) {
-    commit("GET_USER_ANNOUNCE_REQUEST");
+  async deleteAnnonce({ commit }, annonceId) {
+    commit("DELETE_ANNOUNCE_REQUEST");
     try {
+      // Récupérer le authToken depuis les cookies
+      const authToken = getCookie("authToken");
 
-      const response = await axios.get(
-        `http://localhost:7000/api/v1/annonce/user-annonce/${userId}`
+      if (!authToken) {
+        return commit("DELETE_ANNOUNCE_FAILURE", {
+          message:
+            "You need to be logged in to delete an announcement. Please log in or create an account.",
+        });
+      }
+
+      // Configuration des en-têtes
+      const config = {
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${authToken}`,
+        },
+      };
+
+      await axios.delete(
+        `http://77.37.86.249:8124/api/jobs/${annonceId}/delete/`,
+        config
       );
-      commit("GET_USER_ANNOUNCE_SUCCESS", response.data);
+      commit("DELETE_ANNOUNCE_SUCCESS", annonceId);
     } catch (error) {
       commit(
-        "GET_USER_ANNOUNCE_FAILURE",
+        "DELETE_ANNOUNCE_FAILURE",
         error.response ? error.response.data : error.message
       );
+      throw error;
     }
   },
 
@@ -311,25 +350,86 @@ const actions = {
   // Get all users' announcements
   async getAllUserAnnonces({ commit }) {
     commit("ALL_USERS_ANNONCE_REQUEST");
+
     try {
-      const response = await axios.get("http://localhost:7000/api/v1/annonce/all");
+      // Récupérer le authToken depuis les cookies
+      const authToken = getCookie("authToken");
+
+      if (!authToken) {
+        return commit("ANNOUNCE_CREATE_FAILURE", {
+          message:
+            "You need to be logged in to create an announcement. Please log in or create an account.",
+        });
+      }
+
+      // Configuration des en-têtes
+      const config = {
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${authToken}`,
+        },
+      };
+
+      const response = await axios.get(
+        "http://77.37.86.249:8124/api/jobs/",
+        config
+      );
+
       commit("ALL_USERS_ANNONCE_SUCCESS", response.data);
     } catch (error) {
       commit(
         "ALL_USERS_ANNONCE_FAILURE",
         error.response ? error.response.data : error.message
       );
+      throw error;
+    }
+  },
+
+  // Get annonce by ID
+  async getAnnonceById({ commit }, annonceId) {
+    commit("SELECT_ANNOUNCE_REQUEST");
+    try {
+      // Récupérer le authToken depuis les cookies
+      const authToken = getCookie("authToken");
+
+      if (!authToken) {
+        return commit("ANNOUNCE_CREATE_FAILURE", {
+          message:
+            "You need to be logged in to create an announcement. Please log in or create an account.",
+        });
+      }
+
+      // Configuration des en-têtes
+      const config = {
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${authToken}`,
+        },
+      };
+
+      const response = await axios.get(
+        `http://77.37.86.249:8124/api/jobs/${annonceId}`,
+        config
+      );
+      commit("SELECT_ANNOUNCE_SUCCESS", { data: response.data });
+    } catch (error) {
+      commit(
+        "SELECT_ANNOUNCE_FAILURE",
+        error.response ? error.response.data : error.message
+      );
+      throw error;
     }
   },
 };
 
 const getters = {
-    announceCreatedData: (state) => state.annonceCreatedState.announcementData,
-    getUserAnnounceData: (state) => state.userAnnonceState, // Change here
-    getUserAuthAnnounceData: (state) => state.userAuthAnnonceState.announcementData,
-    getUpdateUserAuthAnnounceData: (state) => state.updateUserAuthAnnonceState.announcementData,
-    getAllUserAnnounceData: (state) => state.allUserAnnonceState.announcementsData,
-  };
+  announceCreatedData: (state) => state.annonceCreatedState.announcementData,
+  getUserAuthAnnounceData: (state) => state.userAuthAnnonceState.annonces,
+  getUpdateUserAuthAnnounceData: (state) =>
+    state.updateUserAuthAnnonceState.announcementData,
+  getAllUserAnnounceData: (state) => state.allUserAnnonceState.annonces,
+  getAnnonceDetailData: (state) => state.selectedAnnonceDetail.annonce,
+};
 export default {
   namespaced: true, // Ensure the module is namespaced
   state,

@@ -5,7 +5,7 @@
         <label
           for="lastname"
           class="block text-sm font-medium leading-6 text-gray-900 text-left"
-          >Lastname</label
+          >Nom</label
         >
         <div class="mt-2">
           <input
@@ -25,7 +25,7 @@
         <label
           for="firstname"
           class="block text-sm font-medium leading-6 text-gray-900 text-left"
-          >Firstname</label
+          >Prénom</label
         >
         <div class="mt-2">
           <input
@@ -36,11 +36,28 @@
             required
             class="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
           />
-          <p
-            v-if="errors.firstname"
-            class="mt-2 text-left text-sm text-red-600"
-          >
+          <p v-if="errors.firstname" class="mt-2 text-left text-sm text-red-600">
             {{ errors.firstname }}
+          </p>
+        </div>
+      </div>
+      <div>
+        <label
+          for="username"
+          class="block text-sm font-medium leading-6 text-gray-900 text-left"
+          >Nom d'utilisateur</label
+        >
+        <div class="mt-2">
+          <input
+            id="username"
+            v-model="username"
+            name="username"
+            type="text"
+            required
+            class="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
+          />
+          <p v-if="errors.username" class="mt-2 text-left text-sm text-red-600">
+            {{ errors.username }}
           </p>
         </div>
       </div>
@@ -48,7 +65,7 @@
         <label
           for="email"
           class="block text-sm font-medium leading-6 text-gray-900 text-left"
-          >Email address</label
+          >Adresse Email</label
         >
         <div class="mt-2">
           <input
@@ -65,13 +82,12 @@
           </p>
         </div>
       </div>
-
       <div>
         <div class="flex items-center justify-between">
           <label
             for="password"
             class="block text-sm font-medium leading-6 text-gray-900 text-left"
-            >Password</label
+            >Mot de passe</label
           >
         </div>
         <div class="mt-2">
@@ -89,7 +105,6 @@
           </p>
         </div>
       </div>
-
       <div>
         <button
           v-if="!loading"
@@ -97,13 +112,13 @@
           class="flex w-full justify-center rounded-md bg-indigo-600 px-3 py-1.5 text-sm font-semibold leading-6 text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
           :disabled="loading"
         >
-          Register
+          S'inscrire
         </button>
         <div
           v-else
           class="flex w-full justify-center rounded-md bg-indigo-600 px-3 py-1.5 text-sm font-semibold leading-6 text-white shadow-sm"
         >
-          Registering...
+          Enregistrement...
         </div>
       </div>
     </form>
@@ -112,19 +127,19 @@
     </p>
     <div class="mt-6 text-center">
       <p class="text-sm text-gray-600">
-        Already have an account ?
+        Vous avez déjà un compte ?
         <a
           href="/login"
           class="font-semibold text-indigo-600 hover:text-indigo-500"
-          >Log on to</a
+          >Connectez-vous</a
         >
       </p>
     </div>
     <div class="mt-2 text-center">
       <p class="text-sm text-gray-600">
-        By registering, you accept our
+        En vous inscrivant, vous acceptez nos
         <a href="#" class="font-semibold text-indigo-600 hover:text-indigo-500">
-          terms and conditions.
+          termes et conditions.
         </a>
       </p>
     </div>
@@ -142,6 +157,8 @@ export default {
       lastname: "",
       email: "",
       password: "",
+      username: "",
+      group: 'recruiteur',
       errors: {},
     };
   },
@@ -162,10 +179,12 @@ export default {
     async registerTeacher() {
       try {
         await this.teacherRegister({
-          firstname: this.firstname,
-          lastname: this.lastname,
           email: this.email,
+          username: this.username,
+          first_name: this.firstname,
+          last_name: this.lastname,
           password: this.password,
+          group: this.group,
         });
         this.errors = {};
       } catch (error) {

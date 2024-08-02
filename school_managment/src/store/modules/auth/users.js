@@ -1,5 +1,6 @@
 import axios from 'axios';
 import router from '@/router'; // Assurez-vous que le chemin est correct
+// import jwt_decode from 'jwt-decode';
 
 const storedUserLoginState = JSON.parse(localStorage.getItem('userLoginState'));
 
@@ -87,6 +88,16 @@ const mutations = {
   },
 };
 
+function parseJwt(token) {
+  const base64Url = token.split('.')[1];
+  const base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
+  const jsonPayload = decodeURIComponent(atob(base64).split('').map(function(c) {
+      return '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2);
+  }).join(''));
+
+  return JSON.parse(jsonPayload);
+}
+
 const actions = {
   setUserState({ commit }, state) {
     commit('SET_USER_STATE', state);
@@ -101,12 +112,16 @@ const actions = {
         },
       };
 
-      const response = await axios.post(`http://localhost:7000/api/v1/auth/user-login`, { email, password }, config);
-      const { token } = response.data.data;
+      const response = await axios.post(`http://77.37.86.249:8124/api/token/`, 
+      { email, password }, config);
+      const token = response.data.access;
 
-    // const expires = new Date(Date.now() + 1 * 60 * 60 * 1000).toUTCString();
+      // Décodez le token pour obtenir les informations utilisateur
+      const decodedToken = parseJwt(token);
+
       document.cookie = `authToken=${token}; path=/`;
-      commit('USER_LOGIN_SUCCESS', { user: response.data.data.user, token });
+      console.log(decodedToken);
+      commit('USER_LOGIN_SUCCESS', { user: decodedToken, token });
       // Redirection vers la page d'accueil après une connexion réussie
       // router.push('/');
 
@@ -115,7 +130,7 @@ const actions = {
     }
   },
 
-  async userRegister({ commit }, { firstname, lastname, email, password }) {
+  async userRegister({ commit }, { email, username, first_name, last_name, password, group }) {
     commit('USER_REGISTER_REQUEST');
     try {
       const config = {
@@ -123,8 +138,9 @@ const actions = {
           'Content-type': 'application/json',
         },
       };
-      const response = await axios.post('http://localhost:7000/api/v1/auth/user-register', { firstname, lastname, email, password }, config);
-      commit('USER_REGISTER_SUCCESS', { user: response.data.data.user, message: response.data.message  });
+      const response = await axios.post('http://77.37.86.249:8124/api/users/create/', 
+      { email, username, first_name, last_name, password, group }, config);
+      commit('USER_REGISTER_SUCCESS', { user: response.data, message: 'l utilisateur a été enregistré avec succès'  });
     } catch (error) {
       console.log(error.response.data, 'Error');
       commit('USER_REGISTER_FAILURE', error.response && error.response.data ? error.response.data : error.message);
@@ -132,16 +148,18 @@ const actions = {
     }
   },
 
-  async teacherRegister({ commit }, { firstname, lastname, email, password }) {
+  async teacherRegister({ commit }, { email, username, first_name, last_name, password, group }) {
     commit('TEACHER_REGISTER_REQUEST');
     try {
       const config = {
         headers: {
-          'Content-type': 'application/json',
+          'Content-type': '*/*',
         },
       };
-      const response = await axios.post('http://localhost:7000/api/v1/auth/teacher-register', { firstname, lastname, email, password }, config);
-      commit('TEACHER_REGISTER_SUCCESS', { user: response.data.data.user, message: response.data.message });
+      const response = await axios.post('http://77.37.86.249:8124/api/users/create/', 
+      { email, username, first_name, last_name, password, group  }, config);
+      console.log(response.status, response.data);
+      commit('TEACHER_REGISTER_SUCCESS', { user: response.data, message: 'le recruteur a été enregistré avec succès' });
     } catch (error) {
       commit('TEACHER_REGISTER_FAILURE', error.response && error.response.data ? error.response.data : error.message);
     }
@@ -159,7 +177,6 @@ const getters = {
   getUserInfo: (state) => state.userLoginState.user,
   isUserRegistered : (state) => state.userRegisterState.isRegister,
   isTeacherRegistered : (state) => state.teacherRegisterState.isRegister,
-
 };
 
 export default {

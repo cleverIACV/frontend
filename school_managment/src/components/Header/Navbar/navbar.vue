@@ -20,7 +20,7 @@
             <a href="/">
               <img
                 class="h-8 w-auto"
-                src="https://tailwindui.com/img/logos/mark.svg?color=indigo&shade=500"
+                src="../../../../public/logo-cv.png"
                 alt="Your Company"
               />
             </a>
@@ -93,14 +93,24 @@
                     >Settings</a
                   >
                 </MenuItem>
-                <MenuItem v-slot="{ active }" v-if="isAuthenticated && isTeacher">
+                <MenuItem v-slot="{ active }" v-if="isAuthenticated && isRecruiter">
                   <a
-                    href="/annonce-details"
+                    href="/user-annonce"
                     :class="[
                       active ? 'bg-gray-100' : '',
                       'block px-4 py-2 text-sm text-gray-700',
                     ]"
-                    >Announcement</a
+                    >My announces</a
+                  >
+                </MenuItem>
+                <MenuItem v-slot="{ active }" v-if="isAuthenticated && isCandidat">
+                  <a
+                    href="/user-applications"
+                    :class="[
+                      active ? 'bg-gray-100' : '',
+                      'block px-4 py-2 text-sm text-gray-700',
+                    ]"
+                    >My applications</a
                   >
                 </MenuItem>
                 <MenuItem v-slot="{ active }">
@@ -185,9 +195,12 @@ export default {
         (item) => !this.isAuthenticated || (item.name !== "Sign in" && item.name !== "Teaching courses")
       );
     },
-    isTeacher() {
-      return this.getUserInfo && this.getUserInfo.role && this.getUserInfo.role.some(role => role.name === 'teacher');
-    }, 
+    isRecruiter() {
+      return this.getUserInfo.group === "recruiter";
+    },
+    isCandidat() {
+      return this.getUserInfo.group === "candidate";
+    },
     userProfile() {
       return this.userAuthProfile ? this.userAuthProfile.userProfile : null;
     },

@@ -24,6 +24,13 @@ const state = {
     loading: false,
     error: null,
   },
+
+  updateUserAuthState: {
+    user: {},
+    loading: false,
+    success : null,
+    error: null,
+  },
 };
 
 const mutations = {
@@ -33,13 +40,30 @@ const mutations = {
         ...payload,
       };
   },
+
+  // Update users
+  UPDATE_USERS_REQUEST(state){
+    state.updateUserAuthState.loading = true;
+    state.updateUserAuthState.error = null;
+  },
+  UPDATE_USERS_SUCCESS(state, payload){
+    state.updateUserAuthState.loading = false;
+    state.updateUserAuthState.user = payload.profil;
+    state.updateUserAuthState.success = payload.message;
+  },
+  UPDATE_USERS_FAILURE(state, error){
+    state.updateUserAuthState.loading = false;
+    state.updateUserAuthState.error = error;
+  },
+
+  // Created user profil
   CREATED_USER_PROFILE_REQUEST(state) {
     state.createdUserProfileState.loading = true;
     state.createdUserProfileState.error = null;
   },
   CREATED_USER_PROFILE_SUCCESS(state, payload) {
     state.createdUserProfileState.loading = false;
-    state.createdUserProfileState.user = payload.data;
+    state.createdUserProfileState.user = payload.profil;
     state.createdUserProfileState.success = payload.message;
     localStorage.setItem('userProfileState', JSON.stringify(state.createdUserProfileState));
   },
@@ -47,19 +71,23 @@ const mutations = {
     state.userLoginState.loading = false;
     state.userLoginState.error = error;
   },
+
+  // User Auth profile
   USER_AUTH_PROFILE_REQUEST(state) {
     state.userAuthProfileState.loading = true;
     state.userAuthProfileState.error = null;
   },
   USER_AUTH_PROFILE_SUCCESS(state, payload) {
     state.userAuthProfileState.loading = false;
-    state.userAuthProfileState.user = payload.data;
+    state.userAuthProfileState.user = payload.profil;
     state.userAuthProfileState.success = payload.message;
   },
   USER_AUTH_PROFILE_FAILURE(state, error) {
     state.userAuthProfileState.loading = false;
     state.userAuthProfileState.error = error;
   },
+
+  // User profil
   USER_PROFILE_REQUEST(state) {
     state.userProfileState.loading = true;
     state.userProfileState.error = null;
@@ -73,6 +101,8 @@ const mutations = {
     state.userProfileState.loading = false;
     state.userProfileState.error = error;
   },
+
+  // All users
   ALL_USERS_REQUEST(state) {
     state.allUsersState.loading = true;
     state.allUsersState.error = null;
@@ -121,15 +151,14 @@ const actions = {
           "Content-Type": "application/json",
           Authorization: `Bearer ${authToken}`,
         },
-        withCredentials: true,
       };
 
       const response = await axios.post(
-        "http://localhost:7000/api/v1/auth/create-user-profile",
+        "http://77.37.86.249:8124/api/profil/create",
         formData,
         config
       );
-      commit("CREATED_USER_PROFILE_SUCCESS", response.data);
+      commit("CREATED_USER_PROFILE_SUCCESS", {profil : response.data, message: "profil successfuly created"});
       return response;
     } catch (error) {
       commit(
@@ -159,14 +188,13 @@ const actions = {
           "Content-Type": "application/json",
           Authorization: `Bearer ${authToken}`,
         },
-        withCredentials: true,
       };
 
       const response = await axios.get(
-        "http://localhost:7000/api/v1/auth/users-auth-profile",
+        "http://77.37.86.249:8124/api/profil/",
         config
       );
-      commit("USER_AUTH_PROFILE_SUCCESS", response.data);
+      commit("USER_AUTH_PROFILE_SUCCESS", {profil : response.data});
     } catch (error) {
       commit(
         "CREATED_USER_PROFILE_FAILURE",
@@ -211,6 +239,33 @@ const actions = {
       commit('ALL_USERS_FAILURE', error.response ? error.response.data : error.message);
     }
   },
+
+  async updateUserAuthProfil({ commit }, params) {
+    commit('UPDATE_USERS_REQUEST');
+    try {
+      // Récupérer le authToken depuis les cookies
+      const authToken = getCookie("authToken");
+
+      if (!authToken) {
+        return commit("USER_AUTH_PROFILE_FAILURE", {
+          message:
+            "You need to be logged in to create an announcement. Please log in or create an account.",
+        });
+      }
+
+      // Configuration des en-têtes
+      const config = {
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${authToken}`,
+        },
+      };
+      const response = await axios.patch('http://77.37.86.249:8124/api/profil/update/', params , config);
+      commit('UPDATE_USERS_SUCCESS', {profil : response.data, message: "profil updated successfuly"});
+    } catch (error) {
+      commit('UPDATE_USERS_FAILURE', error.response ? error.response.data : error.message);
+    }
+  },
   
   
 
@@ -221,6 +276,7 @@ const getters = {
   userAuthProfile: (state) => state.userAuthProfileState.user,
   userProfile: (state) => state.userProfileState.user,
   allUsers: (state) => state.allUsersState.user,
+  updateProfil : (state) => state.updateUserAuthState.user,
 
 };
 

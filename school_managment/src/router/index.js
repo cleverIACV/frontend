@@ -12,6 +12,9 @@ import CreateAnnouncement from '@/views/Annoucement/CreateAnnoucement.vue';
 import CreateUserProfile from '@/views/Auth/CreateUserProfile.vue';
 import AnnonceDetails from '@/views/Annoucement/AnnonceDetail.vue';
 import UserProfile from '@/views/Auth/UserProfile.vue';
+import AnnonceDetail2 from '@/views/Annoucement/AnnonceDetail2.vue';
+import UserAuthAnnonce from '@/views/Annoucement/UserAuthAnnonce.vue';
+import UserApplicationPage from '@/views/Applications/UserAuthApplications.vue';
 
 const routes = [
   {
@@ -22,7 +25,7 @@ const routes = [
         path: '/',
         name: 'HomePage',
         component: HomePage,
-        meta: { requiresAuth: true } // Ajoutez meta pour les routes protégées
+        meta: { requiresAuth: true } 
       },
       {
         path: '/annonce-details',
@@ -31,9 +34,27 @@ const routes = [
         meta: { requiresAuth: true } // Ajoutez meta pour les routes protégées
       },
       {
+        path: '/annonce-details/:id',
+        name: 'AnnonceDetail2',
+        component: AnnonceDetail2,
+        meta: { requiresAuth: true } // Ajoutez meta pour les routes protégées
+      },
+      {
         path: '/user-profile',
         name: 'UserProfile',
         component: UserProfile,
+        meta: { requiresAuth: true }
+      },
+      {
+        path: '/user-annonce',
+        name: 'UserAuthAnnonce',
+        component: UserAuthAnnonce,
+        meta: { requiresAuth: true }
+      },
+      {
+        path: '/user-applications',
+        name: 'UserApplicationPage',
+        component: UserApplicationPage,
         meta: { requiresAuth: true }
       },
     ],
@@ -49,7 +70,7 @@ const routes = [
     component: UserRegistration,
   },
   {
-    path: '/teacher-register',
+    path: '/recruiter-register',
     name: 'TeacherRegister',
     component: TeacherRegister,
   },

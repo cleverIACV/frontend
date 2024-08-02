@@ -6,9 +6,7 @@
         <div class="relative pt-1">
           <div class="flex mb-2 items-center justify-between">
             <div>
-              <span
-                class="text-xs font-semibold inline-block py-1 px-2 uppercase rounded-full text-pink-600 bg-pink-200"
-              >
+              <span class="text-xs font-semibold inline-block py-1 px-2 uppercase rounded-full text-pink-600 bg-pink-200">
                 Étape {{ currentStep }} sur 4
               </span>
             </div>
@@ -18,213 +16,81 @@
               </span>
             </div>
           </div>
-          <div
-            class="overflow-hidden h-2 mb-4 text-xs flex rounded bg-pink-200"
-          >
-            <div
-              :style="{ width: progressPercentage + '%' }"
-              class="shadow-none flex flex-col text-center whitespace-nowrap text-white justify-center bg-pink-500"
-            ></div>
+          <div class="overflow-hidden h-2 mb-4 text-xs flex rounded bg-pink-200">
+            <div :style="{ width: progressPercentage + '%' }" class="shadow-none flex flex-col text-center whitespace-nowrap text-white justify-center bg-pink-500"></div>
           </div>
         </div>
       </div>
 
       <div v-if="currentStep === 1">
-        <h2 class="text-xl font-bold mb-4">Titre de votre annonce</h2>
+        <h2 class="text-xl font-bold mb-4">Informations de base</h2>
         <form @submit.prevent="nextStep">
           <div class="mb-4">
-            <label for="slug" class="block text-gray-700 text-sm font-bold mb-2"
-              >Titre:</label
-            >
-            <input
-              type="text"
-              id="slug"
-              v-model="formData.slug"
-              required
-              class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-            />
-            <p v-if="errors.slug" class="text-red-500 text-xs italic">
-              {{ errors.slug }}
-            </p>
+            <label for="title" class="block text-gray-700 text-sm font-bold mb-2">Titre de l'offre :</label>
+            <input type="text" id="title" v-model="formData.title" required class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" />
+            <p v-if="errors.title" class="text-red-500 text-xs italic">{{ errors.title }}</p>
           </div>
           <div class="mb-4">
-            <label
-              for="mainSubject"
-              class="block text-gray-700 text-sm font-bold mb-2"
-              >Sujet principal:</label
-            >
-            <input
-              type="text"
-              id="mainSubject"
-              v-model="formData.mainSubject"
-              required
-              class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-            />
-            <p v-if="errors.mainSubject" class="text-red-500 text-xs italic">
-              {{ errors.mainSubject }}
-            </p>
+            <label for="description" class="block text-gray-700 text-sm font-bold mb-2">Description:</label>
+            <textarea id="description" v-model="formData.description" required class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"></textarea>
+            <p v-if="errors.description" class="text-red-500 text-xs italic">{{ errors.description }}</p>
           </div>
           <div class="flex items-center justify-between">
-            <button
-              type="submit"
-              class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
-            >
-              Suivant
-            </button>
+            <button type="submit" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline">Suivant</button>
           </div>
         </form>
       </div>
 
       <div v-else-if="currentStep === 2">
-        <h2 class="text-xl font-bold mb-4">Description du cours</h2>
+        <h2 class="text-xl font-bold mb-4">Exigences et localisation</h2>
         <form @submit.prevent="nextStep">
           <div class="mb-4">
-            <label
-              for="description"
-              class="block text-gray-700 text-sm font-bold mb-2"
-              >Description de vous:</label
-            >
-            <textarea
-              id="description"
-              v-model="formData.description"
-              required
-              class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-            ></textarea>
-            <p v-if="errors.description" class="text-red-500 text-xs italic">
-              {{ errors.description }}
-            </p>
+            <label for="requirements" class="block text-gray-700 text-sm font-bold mb-2">Exigences:</label>
+            <textarea id="requirements" v-model="formData.requirements" required class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"></textarea>
+            <p v-if="errors.requirements" class="text-red-500 text-xs italic">{{ errors.requirements }}</p>
           </div>
           <div class="mb-4">
-            <label
-              for="courseDescription"
-              class="block text-gray-700 text-sm font-bold mb-2"
-              >Description du cours:</label
-            >
-            <textarea
-              id="courseDescription"
-              v-model="formData.courseDescription"
-              required
-              class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-            ></textarea>
-            <p
-              v-if="errors.courseDescription"
-              class="text-red-500 text-xs italic"
-            >
-              {{ errors.courseDescription }}
-            </p>
+            <label for="location" class="block text-gray-700 text-sm font-bold mb-2">Localisation:</label>
+            <input type="text" id="location" v-model="formData.location" required class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" />
+            <p v-if="errors.location" class="text-red-500 text-xs italic">{{ errors.location }}</p>
           </div>
           <div class="flex items-center justify-between">
-            <button
-              type="submit"
-              class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
-            >
-              Suivant
-            </button>
+            <button type="submit" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline">Suivant</button>
           </div>
         </form>
       </div>
 
       <div v-else-if="currentStep === 3">
-        <h2 class="text-xl font-bold mb-4">Détails du cours</h2>
+        <h2 class="text-xl font-bold mb-4">Détails supplémentaires</h2>
         <form @submit.prevent="nextStep">
           <div class="mb-4">
-            <label
-              for="subSpecialties"
-              class="block text-gray-700 text-sm font-bold mb-2"
-              >Sous-spécialités:</label
-            >
-            <input
-              type="text"
-              id="subSpecialties"
-              v-model="formData.subSpecialties"
-              class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-            />
-            <p v-if="errors.subSpecialties" class="text-red-500 text-xs italic">
-              {{ errors.subSpecialties }}
-            </p>
+            <label for="deadline" class="block text-gray-700 text-sm font-bold mb-2">Date limite:</label>
+            <input type="datetime-local" id="deadline" v-model="formData.deadline" required class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" />
+            <p v-if="errors.deadline" class="text-red-500 text-xs italic">{{ errors.deadline }}</p>
           </div>
           <div class="mb-4">
-            <label
-              for="courseMode"
-              class="block text-gray-700 text-sm font-bold mb-2"
-              >Mode de cours:</label
-            >
-            <select
-              id="courseMode"
-              v-model="formData.courseMode"
-              required
-              class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-            >
-              <option value="">Sélectionnez un mode</option>
-              <option value="In-person">En personne</option>
-              <option value="Webcome">En ligne</option>
+            <label for="category" class="block text-gray-700 text-sm font-bold mb-2">Catégorie:</label>
+            <select id="category" v-model="formData.category" required class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline">
+              <option value="">Sélectionner une catégorie</option>
+              <option v-for="category in categories" :key="category.id" :value="category.id">{{ category.name }}</option>
             </select>
-            <p v-if="errors.courseMode" class="text-red-500 text-xs italic">
-              {{ errors.courseMode }}
-            </p>
+            <p v-if="errors.category" class="text-red-500 text-xs italic">{{ errors.category }}</p>
           </div>
           <div class="mb-4">
-            <label for="city" class="block text-gray-700 text-sm font-bold mb-2"
-              >Ville:</label
-            >
-            <multiselect
-              v-model="formData.city"
-              :options="cities"
-              :searchable="true"
-              :close-on-select="true"
-              placeholder="Sélectionnez une ville"
-              required
-              class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-            />
-            <p v-if="errors.city" class="text-red-500 text-xs italic">
-              {{ errors.city }}
-            </p>
-          </div>
-          <div class="mb-4">
-            <label
-              for="hourlyRate"
-              class="block text-gray-700 text-sm font-bold mb-2"
-              >Taux horaire:</label
-            >
-            <input
-              type="number"
-              id="hourlyRate"
-              v-model="formData.hourlyRate"
-              required
-              class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-            />
-            <p v-if="errors.hourlyRate" class="text-red-500 text-xs italic">
-              {{ errors.hourlyRate }}
-            </p>
-          </div>
-          <div class="mb-4">
-            <label
-              for="responseTime"
-              class="block text-gray-700 text-sm font-bold mb-2"
-              >Temps de réponse:</label
-            >
-            <select
-              id="responseTime"
-              v-model="formData.responseTime"
-              required
-              class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-            >
-              <option value="">Sélectionnez un temps</option>
-              <option value="1h">1 heure</option>
-              <option value="2h">2 heures</option>
-              <option value="24h">24 heures</option>
+            <label for="contract_type" class="block text-gray-700 text-sm font-bold mb-2">Type de contrat:</label>
+            <select id="contract_type" v-model="formData.contract_type" required class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline">
+              <option value="">Sélectionner un type de contrat</option>
+              <option v-for="contrat in contrats" :key="contrat.id" :value="contrat.id">{{ contrat.name }}</option>
             </select>
-            <p v-if="errors.responseTime" class="text-red-500 text-xs italic">
-              {{ errors.responseTime }}
-            </p>
+            <p v-if="errors.contract_type" class="text-red-500 text-xs italic">{{ errors.contract_type }}</p>
+          </div>
+          <div class="mb-4">
+            <label for="company_name" class="block text-gray-700 text-sm font-bold mb-2">Nom de l'entreprise:</label>
+            <input type="text" id="company_name" v-model="formData.company_name" required class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" />
+            <p v-if="errors.company_name" class="text-red-500 text-xs italic">{{ errors.company_name }}</p>
           </div>
           <div class="flex items-center justify-between">
-            <button
-              type="submit"
-              class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
-            >
-              Suivant
-            </button>
+            <button type="submit" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline">Suivant</button>
           </div>
         </form>
       </div>
@@ -233,74 +99,43 @@
         <h2 class="text-xl font-bold mb-4">Résumé de votre annonce</h2>
         <form @submit.prevent="handleSubmitAnnouncement">
           <div class="mb-4">
-            <p class="text-gray-700">
-              <strong>Titre:</strong> {{ formData.slug }}
-            </p>
+            <p class="text-gray-700"><strong>Titre:</strong> {{ formData.title }}</p>
           </div>
           <div class="mb-4">
-            <p class="text-gray-700">
-              <strong>Description:</strong> {{ formData.description }}
-            </p>
+            <p class="text-gray-700"><strong>Description:</strong> {{ formData.description }}</p>
           </div>
           <div class="mb-4">
-            <p class="text-gray-700">
-              <strong>Description du cours:</strong>
-              {{ formData.courseDescription }}
-            </p>
+            <p class="text-gray-700"><strong>Exigences:</strong> {{ formData.requirements }}</p>
           </div>
           <div class="mb-4">
-            <p class="text-gray-700">
-              <strong>Sous-spécialités:</strong> {{ formData.subSpecialties }}
-            </p>
+            <p class="text-gray-700"><strong>Localisation:</strong> {{ formData.location }}</p>
           </div>
           <div class="mb-4">
-            <p class="text-gray-700">
-              <strong>Mode de cours:</strong> {{ formData.courseMode }}
-            </p>
+            <p class="text-gray-700"><strong>Date limite:</strong> {{ formData.deadline }}</p>
           </div>
           <div class="mb-4">
-            <p class="text-gray-700">
-              <strong>Ville:</strong> {{ formData.city }}
-            </p>
+            <p class="text-gray-700"><strong>Catégorie:</strong> {{ formData.category }}</p>
           </div>
           <div class="mb-4">
-            <p class="text-gray-700">
-              <strong>Taux horaire:</strong> {{ formData.hourlyRate }} €
-            </p>
+            <p class="text-gray-700"><strong>Type de contrat:</strong> {{ formData.contract_type }}</p>
           </div>
           <div class="mb-4">
-            <p class="text-gray-700">
-              <strong>Temps de réponse:</strong> {{ formData.responseTime }}
-            </p>
+            <p class="text-gray-700"><strong>Nom de l'entreprise:</strong> {{ formData.company_name }}</p>
           </div>
           <div class="flex items-center justify-between">
-            <button
-              type="submit"
-              class="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
-            >
-              Soumettre
-            </button>
+            <button type="submit" class="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline">Soumettre</button>
           </div>
         </form>
-        <p v-if="showMessage" class="mt-2 text-sm text-green-600">
-            {{ message }}
-          </p>
-          <div class="flex justify-between mt-4" v-if="showMessage">
-          <a
-            href="/"
-            class="bg-gray-500 hover:bg-gray-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline cursor-pointer"
-          >
-            Retour a la page d'acceuil
+        <p v-if="showMessage" class="mt-2 text-sm text-green-600">{{ message }}</p>
+        <div class="flex justify-between mt-4" v-if="showMessage">
+          <a href="/" class="bg-gray-500 hover:bg-gray-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline cursor-pointer">
+            Retour à la page d'accueil
           </a>
         </div>
       </div>
 
       <div class="flex justify-between mt-4">
-        <button
-          v-if="currentStep > 1"
-          @click="previousStep"
-          class="bg-gray-500 hover:bg-gray-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
-        >
+        <button v-if="currentStep > 1" @click="previousStep" class="bg-gray-500 hover:bg-gray-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline">
           Retour
         </button>
         <div>Étape {{ currentStep }} / 4</div>
@@ -311,34 +146,36 @@
 
 <script>
 import { mapActions, mapGetters } from "vuex";
-import Multiselect from "vue-multiselect";
-import { cities } from "@/assets/cities/cities.js";
+import { format } from 'date-fns';
 
 export default {
   name: "CreateAnnouncement",
-  components: {
-    Multiselect,
-  },
   data() {
     return {
       formData: {
-        slug: "",
+        title: "",
         description: "",
-        courseDescription: "",
-        mainSubject: "",
-        subSpecialties: "",
-        courseMode: "",
-        city: "",
-        hourlyRate: "",
-        responseTime: "",
+        requirements: "",
+        location: "",
+        deadline: "",
+        category: "",
+        contract_type: "",
+        company_name: "",
       },
       errors: {},
-      cities,
       showMessage: false,
     };
   },
   computed: {
     ...mapGetters("annoucement", ["announceCreatedData"]),
+    ...mapGetters("categories", ["getCategories"]),
+    ...mapGetters("contrat", ["getContrat"]),
+    categories() {
+      return this.getCategories;
+    },
+    contrats() {
+      return this.getContrat;
+    },
     currentStep() {
       return parseInt(this.$route.params.step) || 1;
     },
@@ -350,35 +187,34 @@ export default {
     },
   },
   methods: {
-    ...mapActions("annoucement", [
-      "saveAnnouncementData",
-      "submitAnnouncement",
-    ]),
+    ...mapActions("annoucement", ["saveAnnouncementData", "submitAnnouncement"]),
+    ...mapActions("categories", ["getAllCategories"]),
+    ...mapActions("contrat", ["getAllContrat"]),
     validateStep() {
       this.errors = {};
-      if (this.currentStep === 1 && !this.formData.slug) {
-        this.errors.slug = "Le titre est requis.";
+      if (this.currentStep === 1 && !this.formData.title) {
+        this.errors.title = "Le titre est requis.";
       }
-      if (this.currentStep === 1 && this.formData.slug.split(" ").length > 10) {
-        this.errors.slug = "Le titre ne doit pas dépasser 10 mots.";
-      }
-      if (this.currentStep === 2 && !this.formData.description) {
+      if (this.currentStep === 1 && !this.formData.description) {
         this.errors.description = "La description est requise.";
       }
-      if (this.currentStep === 2 && !this.formData.courseDescription) {
-        this.errors.courseDescription = "La description du cours est requise.";
+      if (this.currentStep === 2 && !this.formData.requirements) {
+        this.errors.requirements = "Les exigences sont requises.";
       }
-      if (this.currentStep === 3 && !this.formData.courseMode) {
-        this.errors.courseMode = "Le mode de cours est requis.";
+      if (this.currentStep === 2 && !this.formData.location) {
+        this.errors.location = "La localisation est requise.";
       }
-      if (this.currentStep === 3 && !this.formData.city) {
-        this.errors.city = "La ville est requise.";
+      if (this.currentStep === 3 && !this.formData.deadline) {
+        this.errors.deadline = "La date limite est requise.";
       }
-      if (this.currentStep === 3 && !this.formData.hourlyRate) {
-        this.errors.hourlyRate = "Le taux horaire est requis.";
+      if (this.currentStep === 3 && !this.formData.category) {
+        this.errors.category = "La catégorie est requise.";
       }
-      if (this.currentStep === 3 && !this.formData.responseTime) {
-        this.errors.responseTime = "Le temps de réponse est requis.";
+      if (this.currentStep === 3 && !this.formData.contract_type) {
+        this.errors.contract_type = "Le type de contrat est requis.";
+      }
+      if (this.currentStep === 3 && !this.formData.company_name) {
+        this.errors.company_name = "Le nom de l'entreprise est requis.";
       }
       return Object.keys(this.errors).length === 0;
     },
@@ -397,17 +233,19 @@ export default {
     },
     async handleSubmitAnnouncement() {
       try {
+        // Formater la date au format ISO avant l'envoi
+        this.formData.deadline = format(new Date(this.formData.deadline), "yyyy-MM-dd'T'HH:mm:ssXXX");
         await this.submitAnnouncement(this.formData);
         this.showMessage = true;
       } catch (error) {
-        this.errors = error.response.data.errors || {
-          general: "Une erreur est survenue",
-        };
+        this.errors = error.response.data.errors || { general: "Une erreur est survenue" };
       }
     },
   },
-  mounted() {
+  async mounted() {
     this.formData = { ...this.announceCreatedData };
+    await this.getAllCategories();
+    await this.getAllContrat();
   },
 };
 </script>
